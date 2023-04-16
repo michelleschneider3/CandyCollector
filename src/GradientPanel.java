@@ -7,9 +7,9 @@ public class GradientPanel extends JPanel {
     private int width;
     private int height;
 
-    String firstColor;
+    private String firstColor;
 
-    String secondColor;
+    private String secondColor;
 
     public GradientPanel(int x, int y, int width, int height, String firstColor, String secondColor) {
         this.x = x;
