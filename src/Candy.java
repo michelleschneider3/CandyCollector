@@ -7,23 +7,23 @@ public class Candy extends Thread {
     private int y;
     private int speed;
     private int width;
-
     private int height;
+    private GamePanel gamePanel;
 
-    GamePanel gamePanel;
-
-    public Candy (int speed) {
+    public Candy (int speed, GamePanel gamePanel) {
         Random random = new Random();
-        int bound = Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH-Constants.CANDY_WIDTH;
+        int bound = Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH-Constants.CANDY_WIDTH-Constants.MARGIN_BUTTON;
         this.x = random.nextInt(Constants.X_START,bound);
-        this.y = this.width;
+        this.y = -100;
         this.speed = speed;
+        this.gamePanel = gamePanel;
     }
 
     public void run () {
-        while (true) {
+        while (!gamePanel.isDead()) {
             this.y += this.speed;
             sleep(100);
+            this.gamePanel.repaint();
         }
     }
 
@@ -44,5 +44,17 @@ public class Candy extends Thread {
 
     public int getY() {
         return y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

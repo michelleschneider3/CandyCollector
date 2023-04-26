@@ -3,15 +3,15 @@ import java.awt.*;
 
 public class BackgroundPanel extends JPanel {
     JButton playButton;
-
     JButton instructionButton;
-
     JLabel levelLabel;
+    MenuPanel menuPanel;
+    GamePanel gamePanel;
 
     public BackgroundPanel () {
         this.setBounds(Constants.X_START, Constants.Y_START, Constants.GAME_WINDOW_WIDTH, Constants.GAME_WINDOW_HEIGHT);
         this.setLayout(null);
-        JPanel menuPanel = new MenuPanel(Constants.X_START,Constants.Y_START,Constants.MENU_PANEL_WIDTH, Constants.GAME_WINDOW_HEIGHT);
+        menuPanel = new MenuPanel(Constants.X_START,Constants.Y_START,Constants.MENU_PANEL_WIDTH, Constants.GAME_WINDOW_HEIGHT);
 
         playButton = new JButton("PLAY");
         playButton.setBounds((Constants.INSTRUCTION_BUTTON_WIDTH+(2*Constants.MARGIN_BUTTON)-Constants.PLAY_BUTTON_WIDTH)/2,Constants.MARGIN_BUTTON,Constants.PLAY_BUTTON_WIDTH,Constants.BUTTON_HEIGHT);
@@ -43,7 +43,8 @@ public class BackgroundPanel extends JPanel {
 
         // play button job
         playButton.addActionListener((e) -> {
-            GamePanel gamePanel = new GamePanel(Constants.FIRST_LEVEL, Constants.CANDIES_SPEED_FIRST_LEVEL, Constants.MAX_CANDIES_FIRST_LEVEL);
+            playButton.setVisible(false);
+            gamePanel = new GamePanel(Constants.FIRST_LEVEL, Constants.CANDIES_SPEED_FIRST_LEVEL, Constants.MAX_CANDIES_FIRST_LEVEL, this);
             gamePanel.setVisible(true);
             this.add(gamePanel);
             this.repaint();
@@ -73,13 +74,13 @@ public class BackgroundPanel extends JPanel {
     public void changeToNextLevel (int level) {
         updateLevelLabel(level);
         if (level==2) {
-            GamePanel gamePanel = new GamePanel(Constants.SECOND_LEVEL, Constants.CANDIES_SPEED_SECOND_LEVEL, Constants.MAX_CANDIES_SECOND_LEVEL);
+            GamePanel gamePanel = new GamePanel(Constants.SECOND_LEVEL, Constants.CANDIES_SPEED_SECOND_LEVEL, Constants.MAX_CANDIES_SECOND_LEVEL, this);
             gamePanel.setVisible(true);
             this.add(gamePanel);
             gamePanel.requestFocusInWindow();
             this.repaint();
         } else {
-            GamePanel gamePanel = new GamePanel(Constants.THIRD_LEVEL, Constants.CANDIES_SPEED_THIRD_LEVEL, Constants.MAX_CANDIES_THIRD_LEVEL);
+            GamePanel gamePanel = new GamePanel(Constants.THIRD_LEVEL, Constants.CANDIES_SPEED_THIRD_LEVEL, Constants.MAX_CANDIES_THIRD_LEVEL, this);
             gamePanel.setVisible(true);
             this.add(gamePanel);
             gamePanel.requestFocusInWindow();
@@ -93,5 +94,9 @@ public class BackgroundPanel extends JPanel {
         } else {
             levelLabel.setText("Level: 3");
         }
+    }
+
+    public void startAgain (int level, int candiesSpeed, int maxCandies) {
+        this.add(new GamePanel(level, candiesSpeed, maxCandies, this));
     }
 }
