@@ -19,7 +19,7 @@ public class Bowl extends Thread{
     }
 
     public void paint (Graphics graphics) {
-        ImageIcon bowlImageIcon = new ImageIcon("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Images\\kindpng_2083291 (6).png");
+        ImageIcon bowlImageIcon = new ImageIcon("src/Images/kindpng_2083291 (6).png");
         bowlImageIcon.paintIcon(this.gamePanel, graphics, this.x, this.y);
         this.width = bowlImageIcon.getIconWidth();
 
