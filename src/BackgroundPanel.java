@@ -45,7 +45,7 @@ public class BackgroundPanel extends JPanel {
         instructionButton.setFocusable(false);
         menuPanel.add(instructionButton);
 
-        levelLabel = new JLabel("Level: 1");
+        levelLabel = new JLabel("Level: ");
         int levelLabelWidth = Constants.LEVEL_LABEL_SIZE*4;
         levelLabel.setBounds((Constants.MENU_PANEL_WIDTH-levelLabelWidth)/2, 2*(instructionButton.getY() + Constants.BUTTON_HEIGHT + Constants.MARGIN_BUTTON), levelLabelWidth,Constants.LEVEL_LABEL_SIZE);
         Font levelFont = new Font("Comic Sans MS", Font.BOLD, Constants.LEVEL_LABEL_SIZE);
@@ -55,20 +55,18 @@ public class BackgroundPanel extends JPanel {
         this.add(menuPanel);
         this.setVisible(true);
 
-        String level = readFromFile(this.levelFile);
-        if (!level.equals("")) {
-            updateLevelLabel(Integer.parseInt(level));
-        }
-
-
         this.playButton.addActionListener((e) -> {
+            String level = readFromFile(this.levelFile);
             playButton.setVisible(false);
-            if (level.equals("")) {
+            if (level=="" || level==null) {
+                updateLevelLabel(1);
                 startAgain(1);
             } else {
                 if (level.equals("Completed")) {
+                    updateLevelLabel(1);
                     startAgain(1);
                 } else {
+                    updateLevelLabel(Integer.parseInt(level));
                     startAgain(Integer.parseInt(level));
                 }
             }
