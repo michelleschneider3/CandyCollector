@@ -36,7 +36,7 @@ public class Bomb extends Thread {
     }
 
     public void paint (Graphics graphics) {
-        ImageIcon bombImageIcon = new ImageIcon("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Images\\clipart128386 (1).png");
+        ImageIcon bombImageIcon = new ImageIcon("src/Images/bomb.png");
         bombImageIcon.paintIcon(this.gamePanel, graphics, this.x, this.y);
         this.width = Constants.BOMB_WIDTH;
         this.height = Constants.BOMB_HEIGHT;

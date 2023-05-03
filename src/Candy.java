@@ -35,7 +35,7 @@ public class Candy extends Thread {
     }
 
     public void paint (Graphics graphics) {
-        ImageIcon candyImageIcon = new ImageIcon("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Images\\4461 (2).png");
+        ImageIcon candyImageIcon = new ImageIcon("src/Images/candy.png");
         candyImageIcon.paintIcon(this.gamePanel, graphics, this.x, this.y);
         this.width = candyImageIcon.getIconWidth();
         this.height = candyImageIcon.getIconHeight();

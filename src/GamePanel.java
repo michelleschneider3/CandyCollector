@@ -40,13 +40,13 @@ public class GamePanel extends JPanel {
 
         try {
             candyCollectClip = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Sounds\\Y2Mate.is - BLOOP SOUND EFFECT-hdsKW9pUeQY-128k-1656609360400 (1).wav"));
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("src/Sounds/Y2Mate.is - BLOOP SOUND EFFECT-hdsKW9pUeQY-128k-1656609360400 (1).wav"));
             candyCollectClip.open(inputStream);
             FloatControl gainControl = (FloatControl) candyCollectClip.getControl(FloatControl.Type.MASTER_GAIN);
             gainControl.setValue(-15f);
 
             gameOverClip = AudioSystem.getClip();
-            AudioInputStream inputStream2 = AudioSystem.getAudioInputStream(new File("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Sounds\\Funny GAME OVER _ Free Sound Effect.wav"));
+            AudioInputStream inputStream2 = AudioSystem.getAudioInputStream(new File("src/Sounds/Funny GAME OVER _ Free Sound Effect.wav"));
             gameOverClip.open(inputStream2);
             FloatControl gainControl2 = (FloatControl) gameOverClip.getControl(FloatControl.Type.MASTER_GAIN);
             gainControl2.setValue(-15f);
@@ -101,7 +101,7 @@ public class GamePanel extends JPanel {
         g2d.setPaint(gradient);
         g2d.fillRect(Constants.X_START, Constants.Y_START, Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH, Constants.GAME_WINDOW_HEIGHT);
 
-        ImageIcon candiesImageIcon = new ImageIcon("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Images\\—Pngtree—sweet strawberry drop shape_5569158 (1) (1).png");
+        ImageIcon candiesImageIcon = new ImageIcon("src/Images/sweet strawberry drop.png");
         candiesImageIcon.paintIcon(this, graphics, 0, 0);
 
         bowl.paint(graphics);

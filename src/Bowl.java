@@ -9,7 +9,7 @@ public class Bowl extends Thread{
     private ImageIcon bowlImageIcon;
 
     public Bowl (GamePanel gamePanel) {
-        bowlImageIcon = new ImageIcon("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Images\\kindpng_2083291 (6).png");
+        bowlImageIcon = new ImageIcon("src/Images/kindpng_2083291 (6).png");
         height = bowlImageIcon.getIconHeight();
         width = bowlImageIcon.getIconWidth();
         this.x = (Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH-width)/2;
