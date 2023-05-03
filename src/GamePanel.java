@@ -4,7 +4,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 public class GamePanel extends JPanel {
     private JLabel scoreLabel;
     private JLabel livesLabel;
@@ -101,9 +100,6 @@ public class GamePanel extends JPanel {
 
         g2d.setPaint(gradient);
         g2d.fillRect(Constants.X_START, Constants.Y_START, Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH, Constants.GAME_WINDOW_HEIGHT);
-
-        ImageIcon candiesImageIcon = new ImageIcon("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Images\\—Pngtree—sweet strawberry drop shape_5569158 (1) (1).png");
-        candiesImageIcon.paintIcon(this, graphics, 0, 0);
 
         bowl.paint(graphics);
 
