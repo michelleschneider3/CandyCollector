@@ -1,6 +1,5 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 public class Movement implements KeyListener {
     private Bowl bowl;
     private GamePanel gamePanel;
@@ -27,7 +26,6 @@ public class Movement implements KeyListener {
             gamePanel.repaint();
         }
     }
-
     @Override
     public void keyReleased(KeyEvent e) {}
 }

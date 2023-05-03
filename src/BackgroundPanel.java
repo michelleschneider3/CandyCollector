@@ -1,26 +1,40 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 
 public class BackgroundPanel extends JPanel {
-    JButton playButton;
-    JButton instructionButton;
-    JLabel levelLabel;
-    MenuPanel menuPanel;
-    GamePanel gamePanel;
+    private JButton playButton;
+    private JButton instructionButton;
+    private JLabel levelLabel;
+    private MenuPanel menuPanel;
+    private GamePanel gamePanel;
+    private File levelFile;
+    private int[] delays;
+    private int[] levels;
+    private int[] speeds;
+    private int[] maxCandies;
+    private String[] levelLabels;
 
     public BackgroundPanel () {
+        this.delays = Constants.DELAY_FOR_EACH_LEVEL;
+        this.levels = Constants.LEVELS;
+        this.speeds = Constants.CANDIES_SPEED_FOR_EACH_LEVEL;
+        this.maxCandies = Constants.MAX_CANDIES_FOR_EACH_LEVEL;
+        this.levelLabels = Constants.LEVELS_LABEL;
+        this.levelFile = creatFile();
+
         this.setBounds(Constants.X_START, Constants.Y_START, Constants.GAME_WINDOW_WIDTH, Constants.GAME_WINDOW_HEIGHT);
         this.setLayout(null);
-        menuPanel = new MenuPanel(Constants.X_START,Constants.Y_START,Constants.MENU_PANEL_WIDTH, Constants.GAME_WINDOW_HEIGHT);
+        this.menuPanel = new MenuPanel(Constants.X_START,Constants.Y_START,Constants.MENU_PANEL_WIDTH, Constants.GAME_WINDOW_HEIGHT);
 
-        playButton = new JButton("PLAY");
-        playButton.setBounds((Constants.INSTRUCTION_BUTTON_WIDTH+(2*Constants.MARGIN_BUTTON)-Constants.PLAY_BUTTON_WIDTH)/2,Constants.MARGIN_BUTTON,Constants.PLAY_BUTTON_WIDTH,Constants.BUTTON_HEIGHT);
-        playButton.setBackground(Color.decode("#E799A3"));
-        playButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, Constants.BUTTON_BORDERS_THICKNESS));
+        this.playButton = new JButton("PLAY");
+        this.playButton.setBounds((Constants.INSTRUCTION_BUTTON_WIDTH+(2*Constants.MARGIN_BUTTON)-Constants.PLAY_BUTTON_WIDTH)/2,Constants.MARGIN_BUTTON,Constants.PLAY_BUTTON_WIDTH,Constants.BUTTON_HEIGHT);
+        this.playButton.setBackground(Color.decode("#E799A3"));
+        this.playButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, Constants.BUTTON_BORDERS_THICKNESS));
         Font startFont = new Font("Comic Sans MS", Font.BOLD, Constants.BUTTON_FONT_SIZE);
-        playButton.setFont(startFont);
-        playButton.setFocusable(false);
-        menuPanel.add(playButton);
+        this.playButton.setFont(startFont);
+        this.playButton.setFocusable(false);
+        this.menuPanel.add(playButton);
 
         instructionButton = new JButton("How to play");
         instructionButton.setBounds(Constants.MARGIN_BUTTON, playButton.getY() + Constants.MARGIN_BUTTON + playButton.getHeight(),Constants.INSTRUCTION_BUTTON_WIDTH,Constants.BUTTON_HEIGHT);
@@ -41,20 +55,29 @@ public class BackgroundPanel extends JPanel {
         this.add(menuPanel);
         this.setVisible(true);
 
-        // play button job
-        playButton.addActionListener((e) -> {
+        String level = readFromFile(this.levelFile);
+        if (!level.equals("")) {
+            updateLevelLabel(Integer.parseInt(level));
+        }
+
+
+        this.playButton.addActionListener((e) -> {
             playButton.setVisible(false);
-            gamePanel = new GamePanel(Constants.FIRST_LEVEL, Constants.CANDIES_SPEED_FIRST_LEVEL, Constants.MAX_CANDIES_FIRST_LEVEL, this);
-            gamePanel.setVisible(true);
-            this.add(gamePanel);
+            if (level.equals("")) {
+                startAgain(1);
+            } else {
+                if (level.equals("Completed")) {
+                    startAgain(1);
+                } else {
+                    startAgain(Integer.parseInt(level));
+                }
+            }
             this.repaint();
         });
 
-        // instruction button job
         instructionButton.addActionListener((e) -> {
             new InstructionWindow();
         });
-
     }
 
     public void paintComponent(Graphics g) {
@@ -69,34 +92,92 @@ public class BackgroundPanel extends JPanel {
 
         g2d.setPaint(gradient);
         g2d.fillRect(Constants.X_START, Constants.Y_START, getWidth(), getHeight());
+
+        ImageIcon candiesImageIcon = new ImageIcon("C:\\Users\\xmich\\IdeaProjects\\Semester B\\sadnat tichnut\\CandyCollector\\CandyCollector\\src\\Images\\—Pngtree—sweet strawberry drop shape_5569158 (1) (1).png");
+        candiesImageIcon.paintIcon(this, g, Constants.MENU_PANEL_WIDTH, 0);
     }
 
-    public void changeToNextLevel (int level) {
+    public void changeToNextLevel (int level, GamePanel gamePanel) {
+        gamePanel.setVisible(false);
         updateLevelLabel(level);
-        if (level==2) {
-            GamePanel gamePanel = new GamePanel(Constants.SECOND_LEVEL, Constants.CANDIES_SPEED_SECOND_LEVEL, Constants.MAX_CANDIES_SECOND_LEVEL, this);
-            gamePanel.setVisible(true);
-            this.add(gamePanel);
-            gamePanel.requestFocusInWindow();
-            this.repaint();
-        } else {
-            GamePanel gamePanel = new GamePanel(Constants.THIRD_LEVEL, Constants.CANDIES_SPEED_THIRD_LEVEL, Constants.MAX_CANDIES_THIRD_LEVEL, this);
-            gamePanel.setVisible(true);
-            this.add(gamePanel);
-            gamePanel.requestFocusInWindow();
-            this.repaint();
+        writeToFile(this.levelFile, ""+level);
+
+        for (int i = 0; i < this.levels.length; i++) {
+            if (level == i+1) {
+                this.gamePanel = new GamePanel(this.levels[i], this.speeds[i], this.maxCandies[i], this, this.delays[i]);
+                break;
+            }
         }
+        this.gamePanel.setVisible(true);
+        this.add(this.gamePanel);
+        this.gamePanel.requestFocusInWindow();
+        this.repaint();
     }
 
     private void updateLevelLabel (int level) {
-        if (level==2) {
-            levelLabel.setText("Level: 2");
-        } else {
-            levelLabel.setText("Level: 3");
+        for (int i = 0; i < this.levelLabels.length; i++) {
+            if (level == i+1) {
+                this.levelLabel.setText(levelLabels[i]);
+                break;
+            }
         }
     }
 
-    public void startAgain (int level, int candiesSpeed, int maxCandies) {
-        this.add(new GamePanel(level, candiesSpeed, maxCandies, this));
+    public void startAgain (int level) {
+        for (int i = 0; i < this.levelLabels.length; i++) {
+            if (level == i+1) {
+                this.gamePanel = new GamePanel(this.levels[i], this.speeds[i], this.maxCandies[i], this, this.delays[i]);
+                break;
+            }
+        }
+        this.add(this.gamePanel);
+    }
+
+    private File creatFile () {
+        File file = new File("src/Files/level.txt");
+        try {
+            boolean success = file.createNewFile();
+            if (success) {
+                System.out.println("File created successfully.");
+            } else {
+                System.out.println("File already exists");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while creating the file");
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    private String readFromFile (File file) {
+        BufferedReader bufferedReader = null;
+        FileReader fileReader = null;
+        String level = "";
+        try {
+            fileReader = new FileReader(file);
+            bufferedReader = new BufferedReader(fileReader);
+            level = bufferedReader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return level;
+    }
+
+    public void writeToFile (File file, String level) {
+        try {
+            if (file != null && file.exists()) {
+                FileWriter fileWriter = new FileWriter(file);
+                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                bufferedWriter.write(level);
+                bufferedWriter.close();
+                fileWriter.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public File getLevelFile() {
+        return levelFile;
     }
 }

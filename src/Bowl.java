@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-
 public class Bowl extends Thread{
-
     private int x;
     private int y;
     private int width;

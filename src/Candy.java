@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
-
 public class Candy extends Thread {
     private int x;
     private int y;
@@ -10,11 +9,11 @@ public class Candy extends Thread {
     private int height;
     private GamePanel gamePanel;
 
-    public Candy (int speed, GamePanel gamePanel) {
+    public Candy(int speed, GamePanel gamePanel) {
         Random random = new Random();
         int bound = Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH-Constants.CANDY_WIDTH-Constants.MARGIN_BUTTON;
         this.x = random.nextInt(Constants.X_START,bound);
-        this.y = -100;
+        this.y = Constants.START_FALLING;
         this.speed = speed;
         this.gamePanel = gamePanel;
     }
@@ -22,12 +21,12 @@ public class Candy extends Thread {
     public void run () {
         while (!gamePanel.isDead()) {
             this.y += this.speed;
-            sleep(100);
+            sleep(Constants.SLEEP_RUN);
             this.gamePanel.repaint();
         }
     }
 
-    public static void sleep (int millis) {
+    private void sleep (int millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
@@ -56,5 +55,9 @@ public class Candy extends Thread {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getSpeed() {
+        return speed;
     }
 }

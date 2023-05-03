@@ -12,13 +12,13 @@ public class InstructionWindow extends JFrame {
         MenuPanel instructionPanel = new MenuPanel(Constants.X_START, Constants.Y_START, Constants.INSTRUCTION_WINDOW_WIDTH, Constants.INSTRUCTION_WINDOW_HEIGHT);
         this.add(instructionPanel);
 
-        JLabel firstLineLabel = new JLabel("Your mission is to collect as many candies as possible into the basket.");
+        JLabel firstLineLabel = new JLabel("Your goal is to collect candies in order to gain a score to move to the next level.");
         firstLineLabel.setBounds(Constants.MARGIN_LABEL,Constants.Y_START,Constants.INSTRUCTION_WINDOW_WIDTH,Constants.LABEL_HEIGHT);
         Font firstLineFont = new Font("Comic Sans MS", Font.PLAIN, Constants.LABEL_SIZE);
         firstLineLabel.setFont(firstLineFont);
         instructionPanel.add(firstLineLabel);
 
-        JLabel secondLineLabel = new JLabel("For each candy you get one point.");
+        JLabel secondLineLabel = new JLabel("You have to avoid the bombs that can cause the end of the game.");
         secondLineLabel.setBounds(Constants.MARGIN_LABEL, firstLineLabel.getHeight() + Constants.MARGIN_LABEL, Constants.INSTRUCTION_WINDOW_WIDTH, Constants.LABEL_HEIGHT );
         Font secondLineFont = new Font("Comic Sans MS", Font.PLAIN, Constants.LABEL_SIZE);
         secondLineLabel.setFont(secondLineFont);

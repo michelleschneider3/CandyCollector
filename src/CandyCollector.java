@@ -1,11 +1,8 @@
 import javax.swing.*;
-import java.awt.*;
-
 public class CandyCollector extends JFrame {
     public static void main(String[] args) {
         new CandyCollector();
     }
-
     public CandyCollector () {
         this.setSize(Constants.GAME_WINDOW_WIDTH,Constants.GAME_WINDOW_HEIGHT);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -17,5 +14,4 @@ public class CandyCollector extends JFrame {
         this.add(backgroundPanel);
         this.setVisible(true);
     }
-
 }
