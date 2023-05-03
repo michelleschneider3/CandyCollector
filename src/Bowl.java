@@ -15,6 +15,7 @@ public class Bowl extends Thread{
         this.x = (Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH-width)/2;
         this.y = Constants.GAME_WINDOW_HEIGHT-2*height;
         this.gamePanel = gamePanel;
+
     }
 
     public void paint (Graphics graphics) {
