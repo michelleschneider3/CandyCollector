@@ -17,9 +17,9 @@ public class Constants {
     public static final int BUTTON_FONT_SIZE = 20;
     public static final int MAX_LIVES = 5;
     public static final int[] LEVELS = {1,2,3,4,5};
-    public static final int[] MAX_CANDIES_FOR_EACH_LEVEL = {2,4,6,8,10};
-    public static final int[] CANDIES_SPEED_FOR_EACH_LEVEL = {4,5,5,6,6};
-    public static final int[] DELAY_FOR_EACH_LEVEL = {7000,6000,6000,5000,4000};
+    public static final int[] MAX_CANDIES_FOR_EACH_LEVEL = {4,6,8,10,12};
+    public static final int[] CANDIES_SPEED_FOR_EACH_LEVEL = {6,6,6,6,6};
+    public static final int[] DELAY_FOR_EACH_LEVEL = {8000,6500,5000,4000,3000};
     public static final String[] LEVELS_LABEL = {"Level: 1", "Level: 2", "Level: 3", "Level: 4", "Level: 5"};
     public static final int CANDY_WIDTH = 60;
     public static final int LIVES_LABEL_SIZE = 50;

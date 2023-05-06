@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-
 public class BackgroundPanel extends JPanel {
     private JButton playButton;
     private JButton instructionButton;

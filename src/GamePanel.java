@@ -7,15 +7,15 @@ import java.util.ArrayList;
 public class GamePanel extends JPanel {
     private JLabel scoreLabel;
     private JLabel livesLabel;
-    private int level;
+    private final int level;
     private int lives;
-    private int candiesSpeed;
-    private int maxCandiesToCollect;
+    private final int candiesSpeed;
+    private final int maxCandiesToCollect;
     private int score;
-    private int delay;
+    private final int delay;
     private boolean isDead;
     private BackgroundPanel backgroundPanel;
-    private Bowl bowl;
+    private final Bowl bowl;
     private ArrayList<Candy> candies;
     private ArrayList<Bomb> bombs;
     private GameOverPanel gameOverPanel;
@@ -37,27 +37,7 @@ public class GamePanel extends JPanel {
 
         this.setBounds(Constants.MENU_PANEL_WIDTH, Constants.Y_START, Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH, Constants.GAME_WINDOW_HEIGHT);
         this.setLayout(null);
-
-        try {
-            candyCollectClip = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("src/Sounds/Y2Mate.is - BLOOP SOUND EFFECT-hdsKW9pUeQY-128k-1656609360400 (1).wav"));
-            candyCollectClip.open(inputStream);
-            FloatControl gainControl = (FloatControl) candyCollectClip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(-15f);
-
-            gameOverClip = AudioSystem.getClip();
-            AudioInputStream inputStream2 = AudioSystem.getAudioInputStream(new File("src/Sounds/Funny GAME OVER _ Free Sound Effect.wav"));
-            gameOverClip.open(inputStream2);
-            FloatControl gainControl2 = (FloatControl) gameOverClip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl2.setValue(-15f);
-
-        } catch (LineUnavailableException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedAudioFileException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.setOpaque(false);
 
         livesLabel = new JLabel("*****");
         livesLabel.setBounds(Constants.X_START + Constants.MARGIN_LABEL, Constants.Y_START, Constants.LIVES_LABEL_SIZE*4,Constants.LIVES_LABEL_SIZE);
@@ -71,8 +51,12 @@ public class GamePanel extends JPanel {
         scoreLabel.setFont(ScoreFont);
         this.add(scoreLabel);
 
+        loadSound();
+
         bowl = new Bowl(this);
-        bowl.start();
+        this.setFocusable(true);
+        this.requestFocus();
+        this.addKeyListener(new Movement(this.bowl, this));
 
         for (int i = 0; i < this.maxCandiesToCollect*10; i++) {
             Candy candy = new Candy(this.candiesSpeed, this);
@@ -83,34 +67,36 @@ public class GamePanel extends JPanel {
             Bomb bomb = new Bomb(this.candiesSpeed*2, this);
             bombs.add(bomb);
         }
-
         this.mainGameLoop();
     }
 
     public void paintComponent (Graphics graphics) {
         super.paintComponent(graphics);
-        Graphics2D g2d = (Graphics2D) graphics;
-
-        Color color1 = new Color(194, 223, 255);
-        Color color2 = new Color(231, 153, 163);
-        GradientPaint gradient = new GradientPaint(0, 0, color2, getWidth(), getHeight(), color1);
-
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-        g2d.setPaint(gradient);
-        g2d.fillRect(Constants.X_START, Constants.Y_START, Constants.GAME_WINDOW_WIDTH-Constants.MENU_PANEL_WIDTH, Constants.GAME_WINDOW_HEIGHT);
-
-        ImageIcon candiesImageIcon = new ImageIcon("src/Images/sweet strawberry drop.png");
-        candiesImageIcon.paintIcon(this, graphics, 0, 0);
-
         bowl.paint(graphics);
-
         for (Candy candy : candies) {
             candy.paint(graphics);
         }
         for (Bomb bomb : bombs) {
             bomb.paint(graphics);
+        }
+    }
+
+    private void loadSound () {
+        try {
+            candyCollectClip = AudioSystem.getClip();
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("src/Sounds/Y2Mate.is - BLOOP SOUND EFFECT-hdsKW9pUeQY-128k-1656609360400 (1).wav"));
+            candyCollectClip.open(inputStream);
+            FloatControl gainControl = (FloatControl) candyCollectClip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-15f);
+
+            gameOverClip = AudioSystem.getClip();
+            AudioInputStream inputStream2 = AudioSystem.getAudioInputStream(new File("src/Sounds/Funny GAME OVER _ Free Sound Effect.wav"));
+            gameOverClip.open(inputStream2);
+            FloatControl gainControl2 = (FloatControl) gameOverClip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl2.setValue(-15f);
+        }
+        catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
         }
     }
 
@@ -147,10 +133,6 @@ public class GamePanel extends JPanel {
             gameOver();
         }
     }
-    private void updateLivesBonus () {
-        this.lives+=2;
-        updateLives();
-    }
 
     private void updateLivesLabel () {
         String result = "";
@@ -177,119 +159,77 @@ public class GamePanel extends JPanel {
     }
 
     private void mainGameLoop () {
-
         new Thread(() -> {
             while (!this.isDead) {
                 this.setFocusable(true);
                 this.requestFocus();
                 this.addKeyListener(new Movement(this.bowl, this));
-                for (int i = 0; i < candies.size(); i++) {
-                    Candy candy = candies.get(i);
-                    int delay = i * this.delay;
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(delay);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        new Thread(candy).start();
-                    }).start();
-                }
+                runObjects(this.candies, this.delay);
+                runObjects(this.bombs, this.delay/2);
 
                 while (!this.isDead) {
-                    if (checkCandyCollisions()) {
-                        candyCollectClip.setFramePosition(0);
-                        candyCollectClip.start();
-                        updateScore();
-                        sleep(10);
-                    }
-                    if (checkIfMissedCandy()) {
-                        updateLives();
-                        sleep(10);
-                    }
-                }
-            }
-        }).start();
-
-        new Thread(() -> {
-            while (!this.isDead) {
-                this.setFocusable(true);
-                this.requestFocus();
-                this.addKeyListener(new Movement(this.bowl, this));
-                for (int i = 0; i < bombs.size(); i++) {
-                    Bomb bomb = bombs.get(i);
-                    int delay = i * this.delay/2;
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(delay);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        new Thread(bomb).start();
-                    }).start();
-                }
-
-                while (!this.isDead) {
-                    if (checkBombCollisions()) {
-                        this.isDead = true;
-                        gameOver();
-                        break;
-                    }
+                    checkCandyCollisions();
+                    checkIfMissedCandy();
+                    checkBombCollisions();
                 }
             }
         }).start();
     }
 
-    private void sleep (int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    private void runObjects (ArrayList<? extends FallingObject> fallingObjects, int currentDelay) {
+        for (int i = 0; i < fallingObjects.size(); i++) {
+            FallingObject fallingObject = fallingObjects.get(i);
+            int delay = i * currentDelay;
+            new Thread(() -> {
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                new Thread(fallingObject).start();
+            }).start();
         }
     }
 
-    private boolean checkCandyCollisions() {
-        boolean result = false;
+    private void checkCandyCollisions() {
         for (int i = 0; i < candies.size(); i++) {
             Candy candy = candies.get(i);
             if (candy.getX() >= bowl.getX()-(Constants.CANDY_WIDTH/2) && candy.getX() <= bowl.getX() + bowl.getWidth() - Constants.CANDY_WIDTH/2 ) {
                 if (candy.getY() == Constants.GAME_WINDOW_HEIGHT - bowl.getHeight() - candy.getHeight() - 20) {
-                    result = true;
+                    candyCollectClip.setFramePosition(0);
+                    candyCollectClip.start();
+                    updateScore();
                     candies.remove(i);
                     break;
                 }
             }
         }
-        return result;
     }
 
-    private boolean checkIfMissedCandy () {
-        boolean result = false;
+    private void checkIfMissedCandy () {
         for (int i = 0; i < candies.size(); i++) {
             Candy candy = candies.get(i);
             if (candy.getY()>this.bowl.getY()) {
-                result = true;
+                updateLives();
                 candies.remove(i);
                 break;
             }
         }
-        return result;
     }
 
-    private boolean checkBombCollisions() {
-        boolean result = false;
+    private void checkBombCollisions() {
         for (int i = 0; i < bombs.size(); i++) {
             Bomb bomb = bombs.get(i);
-            //bowl
+
             Rectangle rect1 = new Rectangle(this.bowl.getWidth(), this.bowl.getHeight());
             rect1.setLocation(this.bowl.getX(), this.bowl.getY());
 
-            //bomb
             Rectangle rect2 = new Rectangle(Constants.BOMB_WIDTH, Constants.BOMB_HEIGHT);
             rect2.setLocation(bomb.getX(), bomb.getY());
 
             if (rect1.intersects(rect2)) {
-                result = true;
+                this.isDead = true;
+                gameOver();
             } else {
                 if (bomb.getY()>Constants.GAME_WINDOW_HEIGHT) {
                     bombs.remove(i);
@@ -297,9 +237,7 @@ public class GamePanel extends JPanel {
                 }
             }
         }
-        return result;
     }
-
 
     public boolean isDead() {
         return isDead;
@@ -307,25 +245,5 @@ public class GamePanel extends JPanel {
 
     public int getLevel() {
         return level;
-    }
-
-    public int getCandiesSpeed() {
-        return candiesSpeed;
-    }
-
-    public int getMaxCandiesToCollect() {
-        return maxCandiesToCollect;
-    }
-
-    public int getDelay() {
-        return delay;
-    }
-
-    public int getLives() {
-        return lives;
-    }
-
-    public int getScore() {
-        return score;
     }
 }
