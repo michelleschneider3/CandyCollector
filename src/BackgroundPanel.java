@@ -131,7 +131,7 @@ public class BackgroundPanel extends JPanel {
     }
 
     private File creatFile () {
-        File file = new File("src/Files/level.txt");
+        File file = new File("src/level.txt");
         try {
             boolean success = file.createNewFile();
             if (success) {
